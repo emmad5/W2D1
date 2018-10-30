@@ -34,6 +34,7 @@ class Manager < Employee
     @sub_employees.each do |employee|
       sum += employee.bonus(multiplier)
       if employee.is_a? (Manager)
+        p self
         sum += employee.salary * multiplier
       end
     end
