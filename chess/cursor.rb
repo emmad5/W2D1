@@ -86,6 +86,7 @@ class Cursor
     when :ctrl_c then Process.exit(0)
     end
   end
+  
 
   def update_pos(diff)
     # debugger

@@ -3,7 +3,7 @@ require "singleton"
 require "byebug"
 
 class Piece
-  attr_reader :piece
+  attr_reader :board
 
   def initialize(color, board, pos)
     @color = color
@@ -15,28 +15,6 @@ class Piece
 
   end
 
-  # def inspect
-  #   case @piece
-  #   when "King" then "♔"
-  #   when "Queen" then "♕"
-  #   when "Rook" then "♖"
-  #   when "Knight" then "♘"
-  #   when "Bishop" then "♗"
-  #   when "Pawn" then "♙"
-  #   end
-  # end
-  #
-  # def to_s
-  #   case @piece
-  #   when "King" then " ♔ ".colorize(:color => :black)
-  #   when "Queen" then " ♕ ".colorize(:color => :black)
-  #   when "Rook" then " ♖ ".colorize(:color => :black)
-  #   when "Knight" then " ♘ ".colorize(:color => :black)
-  #   when "Bishop" then " ♗ ".colorize(:color => :black)
-  #   when "Pawn" then " ♙ ".colorize(:color => :black)
-  #   end
-  # end
-
 end
 
 class Null_Piece < Piece
@@ -46,16 +24,18 @@ class Null_Piece < Piece
   end
 
   def symbol
-    " ⃞ "
+    "   "
   end
 end
 
 
 module SlidingPiece
   def moves
+    #debugger
     moves = []
     move_dirs.each do |direction|
-      moves << grow_unblocked_moves_in_dir(direction)
+      moves << grow_unblocked_moves_in_dir(direction[0], direction[1])
+      p moves
     end
     moves
   end
@@ -79,11 +59,13 @@ module SlidingPiece
 
   def grow_unblocked_moves_in_dir(dx, dy)
     possible_moves = []
-    x, y = @piece.pos
-    while @board[[x, y]].empty? && @board.valid_pos([x, y])
+    #debugger
+    x, y = @pos[0], @pos[1]
+    while @board[[x, y]].is_a? Null_Piece
       x += dx
       y += dy
       possible_moves << [x,y]
+      p possible_moves
     end
     possible_moves
   end
@@ -151,7 +133,7 @@ module SteppingPiece
 
   private
   def move_diffs
-
+    raise NotImplementedError
   end
 end
 
@@ -167,7 +149,7 @@ class Knight < Piece
   end
 
   def move_diffs
-
+    [[1, 2], [2, 1], [-1, 2], [-2, 1], [-1, -2], [1, -2], [2, -1], [-2, -1]]
   end
 
 end
@@ -184,7 +166,7 @@ class King < Piece
   end
 
   def move_diifs
-
+    [[0, 1], [1, 0], [0, -1], [-1, 0]]
   end
 
 end

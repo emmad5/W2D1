@@ -7,19 +7,19 @@ class Board
   end
 
   def populate
-    self[[0,3]], self[[7,3]] = Queen.new('white', @board, ([0, 3])), Queen.new('black', @board, ([7, 3]))
-    self[[0,4]], self[[7,4]] = King.new('white', @board, ([0, 4])), King.new('black', @board, ([7, 4]))
-    self[[0,0]], self[[0,7]] = Rook.new('white', @board, ([0, 0])), Rook.new('white', @board, ([0, 7]))
-    self[[7,0]], self[[7,7]] = Rook.new('black', @board, ([7, 0])), Rook.new('black', @board, ([7, 7]))
-    self[[0,1]], self[[0,6]] = Knight.new('white', @board, ([0, 1])), Knight.new('white', @board, ([0, 6]))
-    self[[7,1]], self[[7,6]] = Knight.new('black', @board, ([7, 1])), Knight.new('black', @board, ([7, 6]))
-    self[[0,2]], self[[0,5]] = Bishop.new('white', @board, ([0, 2])), Bishop.new('white', @board, ([0, 5]))
-    self[[7,2]], self[[7,5]] = Bishop.new('black', @board, ([7, 2])), Bishop.new('black', @board, ([7, 5]))
+    self[[0,3]], self[[7,3]] = Queen.new('white', self, ([0, 3])), Queen.new('black', self, ([7, 3]))
+    self[[0,4]], self[[7,4]] = King.new('white', self, ([0, 4])), King.new('black', self, ([7, 4]))
+    self[[0,0]], self[[0,7]] = Rook.new('white', self, ([0, 0])), Rook.new('white', self, ([0, 7]))
+    self[[7,0]], self[[7,7]] = Rook.new('black', self, ([7, 0])), Rook.new('black', self, ([7, 7]))
+    self[[0,1]], self[[0,6]] = Knight.new('white', self, ([0, 1])), Knight.new('white', self, ([0, 6]))
+    self[[7,1]], self[[7,6]] = Knight.new('black', self, ([7, 1])), Knight.new('black', self, ([7, 6]))
+    self[[0,2]], self[[0,5]] = Bishop.new('white', self, ([0, 2])), Bishop.new('white', self, ([0, 5]))
+    self[[7,2]], self[[7,5]] = Bishop.new('black', self, ([7, 2])), Bishop.new('black', self, ([7, 5]))
     (0..7).each do |i|
-      self[[1, i]] = Pawn.new('white', @board, ([1, i]))
+      self[[1, i]] = Pawn.new('white', self, ([1, i]))
     end
     (0..7).each do |i|
-      self[[6, i]] = Pawn.new('black', @board, ([6, i]))
+      self[[6, i]] = Pawn.new('black', self, ([6, i]))
     end
 
     self.board.each_with_index do |row, i|
@@ -30,13 +30,18 @@ class Board
       end
     end
   end
+  
 
   def move_piece(start_pos, end_pos)
-    raise "There is no piece at #{start_pos}" if self[start_pos].nil?
-    raise "The piece cannot move to #{end_pos}" unless self[end_pos].nil?
+    raise "There is no piece at #{start_pos}" if self[start_pos].is_a? Null_Piece
+    raise "The piece cannot move to #{end_pos}" unless self[end_pos].is_a? Null_Piece
     piece = self[start_pos]
-    self[end_pos] = piece
-    self[start_pos] = nil
+    if piece.moves.include?(end_pos)
+      self[end_pos] = piece 
+      self[start_pos] = Null_Piece.instance
+    else
+      raise "You can't move here"
+    end
   end
 
   def [](pos)
